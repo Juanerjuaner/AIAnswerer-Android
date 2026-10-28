@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 /**
@@ -30,7 +31,7 @@ object QuestionBankImporter {
     /** 文件选择器可接受的 MIME 类型 */
     val MIME_TYPES = arrayOf(MIME_XLSX, MIME_DOCX, "application/octet-stream", "application/zip")
 
-    suspend fun import(uri: Uri): ImportResult = withContext(Dispatchers.IO) {
+    suspend fun importFromUri(uri: Uri): ImportResult = withContext(Dispatchers.IO) {
         val context = MyApplication.getAppContext()
         val tempFile = copyToTempFile(context, uri)
         try {
@@ -49,6 +50,10 @@ object QuestionBankImporter {
                 }
                 QuestionBankRepository.insertAll(questions)
             }
+        } catch (e: ZipException) {
+            throw IllegalArgumentException(
+                MyApplication.getString(R.string.question_bank_unsupported)
+            )
         } finally {
             tempFile.delete()
         }
@@ -156,7 +161,10 @@ object QuestionBankImporter {
         while (parser.eventType != XmlPullParser.END_DOCUMENT) {
             when (parser.eventType) {
                 XmlPullParser.START_TAG -> when (parser.localName()) {
-                    "row" -> currentRow = mutableMapOf()
+                    "row" -> {
+                        currentRow = mutableMapOf()
+                        lastColumn = -1
+                    }
                     "c" -> {
                         inCell = true
                         val reference = parser.getAttributeValue(null, "r")
@@ -283,7 +291,7 @@ object QuestionBankImporter {
                             if (inParagraph) {
                                 val text = paragraph.toString().trim()
                                 if (tableDepth >= 1) {
-                                    cell?.append(text).append('\n')
+                                    cell?.let { it.append(text).append('\n') }
                                 } else {
                                     paragraphs.add(text)
                                 }
@@ -464,7 +472,10 @@ object QuestionBankImporter {
     private val QUESTION_PREFIX =
         Regex("^\\s*(题目|问题|题干|question)\\s*[:：]\\s*", RegexOption.IGNORE_CASE)
     private val ANSWER_PREFIX =
-        Regex("^\\s*(正确答案|参考答案|答案|解析|answer)\\s*[:：]?\\s*", RegexOption.IGNORE_CASE)
+        Regex(
+            "^\\s*(答案解析|答案与解析|正确答案|参考答案|答案|解析|answer)\\s*[:：]?\\s*",
+            RegexOption.IGNORE_CASE
+        )
     private val OPTION_PREFIX = Regex("^\\s*[A-Ha-h][.、．)）]\\s*")
 
     /**
@@ -519,20 +530,14 @@ object QuestionBankImporter {
         }
 
         private fun resolveHeader(row: List<String>): ColumnMapping? {
-            var question = -1
-            var answer = -1
-            var options = -1
-            var type = -1
+            val cells = row.map { it.trim().lowercase() }
+            val used = mutableSetOf<Int>()
 
-            row.forEachIndexed { index, raw ->
-                val cell = raw.trim()
-                when {
-                    question < 0 && matches(cell, questionAliases) -> question = index
-                    answer < 0 && matches(cell, answerAliases) -> answer = index
-                    options < 0 && matches(cell, optionAliases) -> options = index
-                    type < 0 && matches(cell, typeAliases) -> type = index
-                }
-            }
+            // 先精确匹配、再包含匹配；答案/选项/题型优先，避免「题目类型」被误判为题干
+            val answer = findColumn(cells, answerAliases, used)
+            val options = findColumn(cells, optionAliases, used)
+            val type = findColumn(cells, typeAliases, used)
+            val question = findColumn(cells, questionAliases, used)
 
             if (question < 0 || answer < 0) return null
             return ColumnMapping(
@@ -541,6 +546,28 @@ object QuestionBankImporter {
                 options = options.takeIf { it >= 0 },
                 type = type.takeIf { it >= 0 }
             )
+        }
+
+        private fun findColumn(
+            cells: List<String>,
+            aliases: List<String>,
+            used: MutableSet<Int>
+        ): Int {
+            aliases.forEach { alias ->
+                val exact = cells.indexOfFirst { it == alias && it !in used }
+                if (exact >= 0) {
+                    used.add(exact)
+                    return exact
+                }
+            }
+            aliases.forEach { alias ->
+                val partial = cells.indexOfFirst { it.contains(alias) && it !in used }
+                if (partial >= 0) {
+                    used.add(partial)
+                    return partial
+                }
+            }
+            return -1
         }
 
         private fun matches(cell: String, aliases: List<String>): Boolean {

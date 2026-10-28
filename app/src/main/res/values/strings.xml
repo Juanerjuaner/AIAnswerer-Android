@@ -80,6 +80,28 @@
     <string name="toast_settings_saved">设置已保存</string>
     <string name="toast_settings_error">保存失败，请检查输入</string>
 
+    <!-- 本地题库 -->
+    <string name="question_bank_title">本地题库</string>
+    <string name="question_bank_card_title">本地题库</string>
+    <string name="question_bank_card_desc">导入 Excel/Word 题库，答题优先本地匹配</string>
+    <string name="question_bank_notice">支持 .xlsx 与 .docx 文件。\n\nExcel：首行使用「题目/答案/选项/题型」表头会自动识别；无表头时按 A=题目、B=答案、C=选项、D=题型 读取。\n\nWord：支持表格，或使用「题目：」「答案：」前缀；也可用空行分隔，每块第一行为题目、其余为答案。\n\n多次导入会累加并按题干自动去重。</string>
+    <string name="question_bank_count">已收录 %1$d 道题</string>
+    <string name="question_bank_empty">尚未导入题库</string>
+    <string name="question_bank_enable">启用本地题库</string>
+    <string name="question_bank_enable_desc">命中题库直接返回答案，未命中再调用 AI</string>
+    <string name="question_bank_import">导入题库文件</string>
+    <string name="question_bank_importing">正在导入...</string>
+    <string name="question_bank_clear">清空题库</string>
+    <string name="question_bank_clear_title">确认清空题库</string>
+    <string name="question_bank_clear_message">将删除全部 %1$d 道题，此操作无法恢复。</string>
+    <string name="question_bank_import_success">导入完成：新增 %1$d 道，跳过 %2$d 道</string>
+    <string name="question_bank_import_failed">导入失败：%1$s</string>
+    <string name="question_bank_unsupported">仅支持 .xlsx 和 .docx 文件</string>
+    <string name="question_bank_file_too_large">文件超过 30MB，无法导入</string>
+    <string name="question_bank_parse_empty">未识别到有效题目，请检查文件格式</string>
+    <string name="question_bank_cleared">题库已清空</string>
+    <string name="question_bank_hit_status">✅ 题库命中</string>
+
     <!-- 关于页面 -->
     <string name="about_title">关于</string>
     <string name="about_app_intro_title">应用简介</string>

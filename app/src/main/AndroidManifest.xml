@@ -47,6 +47,12 @@
             android:exported="false"
             android:label="@string/model_settings_title" />
 
+        <!-- 本地题库Activity -->
+        <activity
+            android:name=".QuestionBankActivity"
+            android:exported="false"
+            android:label="@string/question_bank_title" />
+
         <!-- 关于Activity -->
         <activity
             android:name=".AboutActivity"

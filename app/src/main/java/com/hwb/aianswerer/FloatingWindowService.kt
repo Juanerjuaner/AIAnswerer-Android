@@ -486,8 +486,19 @@ class FloatingWindowService : Service(), LifecycleOwner, ViewModelStoreOwner,
                 val questionScope = AppConfig.getQuestionScope()
                 val autoCopy = AppConfig.getAutoCopy()
 
-                val apiClient = OpenAIClient.getInstance()
-                val result = apiClient.analyzeQuestion(text, questionTypes, questionScope)
+                val localAnswer = if (AppConfig.isQuestionBankEnabled()) {
+                    try {
+                        QuestionBankRepository.findMatch(text)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "本地题库匹配失败", e)
+                        null
+                    }
+                } else {
+                    null
+                }
+
+                val result = localAnswer?.let { Result.success(it) }
+                    ?: OpenAIClient.getInstance().analyzeQuestion(text, questionTypes, questionScope)
 
                 result.onSuccess { aiAnswer ->
                     // 读取答题卡片显示配置
@@ -507,7 +518,11 @@ class FloatingWindowService : Service(), LifecycleOwner, ViewModelStoreOwner,
                     answerText.value = formattedAnswer
                     showAnswer.value = true
 
-                    statusMessage.value = if (autoCopy) "✅ 答案已复制" else "✅ 答案已生成"
+                    statusMessage.value = when {
+                        localAnswer != null -> MyApplication.getString(R.string.question_bank_hit_status)
+                        autoCopy -> "✅ 答案已复制"
+                        else -> "✅ 答案已生成"
+                    }
                     delay(2000)
                     statusMessage.value = null
                 }.onFailure { error ->

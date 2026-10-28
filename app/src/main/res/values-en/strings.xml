@@ -80,6 +80,28 @@
     <string name="toast_settings_saved">Settings saved</string>
     <string name="toast_settings_error">Save failed, please check input</string>
 
+    <!-- Question Bank -->
+    <string name="question_bank_title">Question Bank</string>
+    <string name="question_bank_card_title">Question Bank</string>
+    <string name="question_bank_card_desc">Import Excel/Word and match locally first</string>
+    <string name="question_bank_notice">Supports .xlsx and .docx files.\n\nExcel: a header row with Question / Answer / Options / Type is detected automatically; without a header, columns A-D are read as Question, Answer, Options, Type.\n\nWord: tables are supported, or use Question: / Answer: prefixes; blank-line blocks with the question on the first line and the answer below also work.\n\nMultiple imports are merged and de-duplicated by question text.</string>
+    <string name="question_bank_count">%1$d questions</string>
+    <string name="question_bank_empty">No question bank imported</string>
+    <string name="question_bank_enable">Enable question bank</string>
+    <string name="question_bank_enable_desc">Return local hits first, otherwise use AI</string>
+    <string name="question_bank_import">Import question bank</string>
+    <string name="question_bank_importing">Importing...</string>
+    <string name="question_bank_clear">Clear question bank</string>
+    <string name="question_bank_clear_title">Clear question bank?</string>
+    <string name="question_bank_clear_message">All %1$d questions will be deleted permanently.</string>
+    <string name="question_bank_import_success">Imported: %1$d added, %2$d skipped</string>
+    <string name="question_bank_import_failed">Import failed: %1$s</string>
+    <string name="question_bank_unsupported">Only .xlsx and .docx files are supported</string>
+    <string name="question_bank_file_too_large">File exceeds 30MB and cannot be imported</string>
+    <string name="question_bank_parse_empty">No valid questions found, please check the file format</string>
+    <string name="question_bank_cleared">Question bank cleared</string>
+    <string name="question_bank_hit_status">✅ Found in question bank</string>
+
     <!-- About screen -->
     <string name="about_title">About</string>
     <string name="about_app_intro_title">App Introduction</string>

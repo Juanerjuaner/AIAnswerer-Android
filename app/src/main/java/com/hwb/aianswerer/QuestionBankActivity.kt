@@ -96,7 +96,7 @@ fun QuestionBankScreen(onBackClick: () -> Unit) {
         scope.launch {
             importing = true
             try {
-                val result = QuestionBankImporter.import(uri)
+                val result = QuestionBankImporter.importFromUri(uri)
                 count = QuestionBankRepository.count()
                 snackbarHostState.showSnackbar(
                     context.getString(
