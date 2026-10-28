@@ -59,6 +59,9 @@ class SettingsActivity : ComponentActivity() {
                     onModelSettingsClick = {
                         startActivity(Intent(this, ModelSettingsActivity::class.java))
                     },
+                    onQuestionBankClick = {
+                        startActivity(Intent(this, QuestionBankActivity::class.java))
+                    },
                     onLanguageChange = { languageCode ->
                         // 应用新的语言设置
                         LanguageUtil.applyLanguage(this, languageCode)
@@ -76,6 +79,7 @@ class SettingsActivity : ComponentActivity() {
  *
  * @param onBackClick 返回按钮点击事件
  * @param onModelSettingsClick 模型设置按钮点击事件
+ * @param onQuestionBankClick 本地题库按钮点击事件
  * @param onLanguageChange 语言切换回调
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +87,7 @@ class SettingsActivity : ComponentActivity() {
 fun SettingsScreen(
     onBackClick: () -> Unit,
     onModelSettingsClick: () -> Unit,
+    onQuestionBankClick: () -> Unit,
     onLanguageChange: (String) -> Unit
 ) {
     // 从配置中加载当前值
@@ -140,6 +145,41 @@ fun SettingsScreen(
                             text = stringResource(R.string.model_settings_card_desc),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 本地题库卡片
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onQuestionBankClick() },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.question_bank_card_title),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.question_bank_card_desc),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
                         )
                     }
                 }

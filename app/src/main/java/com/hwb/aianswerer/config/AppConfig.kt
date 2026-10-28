@@ -24,6 +24,7 @@ object AppConfig {
     private const val KEY_CROP_MODE = "crop_mode"
     private const val KEY_SHOW_ANSWER_CARD_QUESTION = "show_answer_card_question"
     private const val KEY_SHOW_ANSWER_CARD_OPTIONS = "show_answer_card_options"
+    private const val KEY_QUESTION_BANK_ENABLED = "question_bank_enabled"
 
     // 语言代码常量
     const val LANGUAGE_ZH = "zh"
@@ -228,6 +229,23 @@ object AppConfig {
      */
     fun getShowAnswerCardOptions(): Boolean {
         return mmkv.decodeBool(KEY_SHOW_ANSWER_CARD_OPTIONS, true)
+    }
+
+    // ========== 本地题库相关 ==========
+
+    /**
+     * 保存本地题库启用状态
+     */
+    fun saveQuestionBankEnabled(enabled: Boolean) {
+        mmkv.encode(KEY_QUESTION_BANK_ENABLED, enabled)
+    }
+
+    /**
+     * 是否启用本地题库优先匹配
+     * @return 默认 true
+     */
+    fun isQuestionBankEnabled(): Boolean {
+        return mmkv.decodeBool(KEY_QUESTION_BANK_ENABLED, true)
     }
 
     // ========== 截图识别模式相关 ==========

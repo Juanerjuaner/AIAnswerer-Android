@@ -66,6 +66,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.hwb.aianswerer.api.OpenAIClient
 import com.hwb.aianswerer.config.AppConfig
+import com.hwb.aianswerer.data.QuestionBankRepository
 import com.hwb.aianswerer.models.CropRect
 import com.hwb.aianswerer.models.formatAnswerWithConfig
 import com.hwb.aianswerer.ui.icons.LocalIcons
