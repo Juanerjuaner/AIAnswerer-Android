@@ -554,15 +554,19 @@ object QuestionBankImporter {
             used: MutableSet<Int>
         ): Int {
             aliases.forEach { alias ->
-                val exact = cells.indexOfFirst { it == alias && it !in used }
-                if (exact >= 0) {
+                val exact = cells.indices.firstOrNull { index ->
+                    index !in used && cells[index] == alias
+                }
+                if (exact != null) {
                     used.add(exact)
                     return exact
                 }
             }
             aliases.forEach { alias ->
-                val partial = cells.indexOfFirst { it.contains(alias) && it !in used }
-                if (partial >= 0) {
+                val partial = cells.indices.firstOrNull { index ->
+                    index !in used && cells[index].contains(alias)
+                }
+                if (partial != null) {
                     used.add(partial)
                     return partial
                 }
